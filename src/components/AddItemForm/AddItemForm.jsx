@@ -1,15 +1,20 @@
 import React, { useState } from 'react'
 
-const AddItemForm = () => {
+const AddItemForm = ({ addItem }) => {
     const [name, setName] = useState('');
-    const [price, setPrice] = useState('');
+    const [price, setPrice] = useState(0);
 
     const submitHandler = (event) => {
         event.preventDefault();
+
+        addItem({
+            name,
+            price,
+        });
     };
 
     const nameChangeHandler = (event) => setName(event.target.value);
-    const priceChangeHandler = (event) => setPrice(event.target.value);
+    const priceChangeHandler = (event) => setPrice(parseInt(event.target.value));
 
     return (
         <form onSubmit={submitHandler}>
