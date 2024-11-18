@@ -6,7 +6,6 @@ const ItemsList = ({ items = [] }) => {
         <div>
             {
                 items.map(curItem => {
-                    console.log(curItem)
                     return <ConnectedItem key={curItem.id} {...curItem} />
                 })
             }

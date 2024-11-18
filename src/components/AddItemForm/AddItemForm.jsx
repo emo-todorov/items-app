@@ -1,20 +1,72 @@
 import React, { useState } from 'react'
 
 const AddItemForm = ({ addItem }) => {
-    const [name, setName] = useState('');
-    const [price, setPrice] = useState(0);
+    const [values, setValues] = useState({
+        name: '',
+        price: '',
+    });
+
+    const [errors, setErrors] = useState({
+        name: '',
+        price: '',
+    });
+
+    const validate = (inputName, value) => {
+        const validator = {
+            name: () => {
+                //TODO validation logic
+                return value && value.length < 5
+                    ? ''
+                    : 'Name error';
+            },
+            price: () => {
+                //TODO validation logic
+                return isNaN(value) || !value
+                    ? 'Price error'
+                    : '';
+            },
+        };
+
+        return validator[inputName]();
+    };
+
+
 
     const submitHandler = (event) => {
         event.preventDefault();
 
-        addItem({
-            name,
-            price,
-        });
+        const newErrors = Object.keys(values).reduce((acc, key) => {
+            const errorMessage = validate(key, values[key]);
+            if (errorMessage) {
+                return {
+                    ...acc,
+                    [key]: errorMessage,
+                };
+            }
+
+            return acc;
+        }, {});
+
+        const hasError = Object.values(newErrors).some(error => error);
+
+        hasError
+            ? setErrors(newErrors)
+            : addItem({
+                name: values.name,
+                price: values.price,
+            });
     };
 
-    const nameChangeHandler = (event) => setName(event.target.value);
-    const priceChangeHandler = (event) => setPrice(parseInt(event.target.value));
+    const onChangeHandler = (event) => {
+        const { name: inputName, value } = event.target;
+
+        setValues(prev => {
+            return {
+                ...prev,
+                [inputName]: value,
+            };
+        });
+    };
 
     return (
         <form onSubmit={submitHandler}>
@@ -23,21 +75,29 @@ const AddItemForm = ({ addItem }) => {
                     <label htmlFor="item-name">Item name</label>
                 </div>
                 <input
-                    value={name}
+                    name='name'
+                    value={values.name}
                     type="text" id="item-name"
-                    onChange={nameChangeHandler}
+                    onChange={onChangeHandler}
                 />
+                {
+                    errors.name && <p className="error">{errors.name}</p>
+                }
             </div>
             <div className="input-wrapper">
                 <div className="label-wrapper">
                     <label htmlFor="item-price">Price</label>
                 </div>
                 <input
-                    value={price}
+                    name='price'
+                    value={values.price}
                     type="text"
                     id="item-price"
-                    onChange={priceChangeHandler}
+                    onChange={onChangeHandler}
                 />
+                {
+                    errors.price && <p className="error">{errors.price}</p>
+                }
             </div>
             <button>Add Item</button>
         </form>
