@@ -1,8 +1,10 @@
 import React from 'react'
 
-const Summary = () => {
+const Summary = ({ total = 0 }) => {
   return (
-    <div>Summary</div>
+    <div>
+      <h1>Total: ${total}</h1>
+    </div>
   )
 }
 
